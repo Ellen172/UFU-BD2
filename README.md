@@ -1,5 +1,11 @@
 # UFU-BD2
-Banco de Dados 2 - 5º período 
+<p>Banco de Dados 2 - 5º período </p>
+
+## Revisão de BD1
 <ul>
-  <li>Exercicios de revisao de BD1</li>
+  <li>select</li>
+  <li>intersect</li>
+  <li>group by</li>
+  <li>insert</li>
+  <li>update</li>
 </ul>

@@ -1,47 +1,47 @@
---01-Nomes das Ag锚ncias com dep贸sitos (nome pode aparecer repetido)
+--01-Nomes das Ag阯cias com dep髎itos (nome pode aparecer repetido)
 
-select nome_agencia from deposito d  ;
+SELECT nome_agencia FROM deposito;
 
---02-Nomes das Ag锚ncias com dep贸sitos (nome sem repeti莽茫o)
+--02-Nomes das Ag阯cias com dep髎itos (nome sem repeti玢o)
 
 SELECT DISTINCT nome_agencia FROM deposito;
 
---03-Nomes de Clientes com dep贸sitos e empr茅stimos ao mesmo tempo;
+--03-Nomes de Clientes com dep髎itos e empr閟timos ao mesmo tempo;
 
-SELECT DISTINCT nome_cliente FROM deposito d 
+SELECT DISTINCT nome_cliente FROM deposito
 intersect 
-SELECT distinct nome_cliente FROM emprestimo
+SELECT DISTINCT nome_cliente FROM emprestimo
 
---04-Nomes de Clientes com dep贸sitos e empr茅stimos ao mesmo tempo na ag锚ncia PUC;
+--04-Nomes de Clientes com dep髎itos e empr閟timos ao mesmo tempo na ag阯cia PUC;
 
-SELECT DISTINCT nome_cliente FROM deposito WHERE nome_agencia = 'PUC'
+SELECT DISTINCT nome_cliente FROM deposito WHERE nome_agencia= 'PUC'
 intersect 
-SELECT DISTINCT nome_cliente FROM emprestimo WHERE nome_agencia ='PUC'
+SELECT DISTINCT nome_cliente FROM emprestimo WHERE nome_agencia='PUC'
 
---Alternativa2 para incluir a condi莽茫o uma 煤nica vez
+--Alternativa2 para incluir a condi玢o uma 鷑ica vez
 SELECT DISTINCT nome_cliente FROM 
-	(	SELECT DISTINCT nome_cliente, nome_agencia FROM deposito 
+	(	SELECT DISTINCT nome_cliente, nome_agencia FROM deposito
 		intersect 
 		select DISTINCT nome_cliente, nome_agencia FROM emprestimo
-	) as relatorio
+	) AS relatorio
 WHERE relatorio.nome_agencia = 'PUC'
 
 --Alternativa3 para usar outro operador (IN)
 SELECT DISTINCT nome_cliente FROM deposito WHERE nome_agencia= 'PUC'
 AND nome_cliente in (SELECT DISTINCT nome_cliente FROM emprestimo WHERE nome_agencia='PUC');
 
---05-Nomes de Clientes com dep贸sitos, mas sem empr茅stimos na ag锚ncia PUC;
+--05-Nomes de Clientes com dep髎itos, mas sem empr閟timos na ag阯cia PUC;
 
-SELECT nome_cliente FROM deposito WHERE nome_agencia ='PUC'  
+SELECT nome_cliente FROM deposito WHERE nome_agencia='PUC'  
 except 
 SELECT nome_cliente from emprestimo WHERE nome_agencia='PUC'
 
 SELECT DISTINCT nome_cliente from deposito WHERE nome_agencia='PUC' 
-AND nome_cliente NOT IN (SELECT distinct nome_cliente FROM emprestimo WHERE nome_agencia='PUC');
+AND nome_cliente NOT IN (SELECT DISTINCT nome_cliente FROM emprestimo WHERE nome_agencia='PUC');
 
---06-Clientes que possuem dep贸sitos ou empr茅stimos na agencia da PUC
+--06-Clientes que possuem dep髎itos ou empr閟timos na agencia da PUC
 
-SELECT DISTINCT nome_cliente from deposito where nome_agencia = 'PUC'
+SELECT DISTINCT nome_cliente from deposito where nome_agencia='PUC'
 UNION
 SELECT DISTINCT nome_cliente FROM emprestimo WHERE nome_agencia='PUC'
 
@@ -62,13 +62,12 @@ SELECT nome_cliente
 FROM cliente
 WHERE nome_cliente like '%Sou_a';
 
---10-Total de dep贸sitos para cada nome de cliente
+--10-Total de dep髎itos para cada nome de cliente
 
 SELECT nome_cliente, sum(1)
-FROM deposito 
-GROUP BY nome_cliente;
+FROM deposito GROUP BY nome_cliente;
 
---11-Nomes de clientes e dep贸sitos que est茫o entre 
+--11-Nomes de clientes e dep髎itos que est鉶 entre 
 --R$ 3.000,00 e R$ 4.000,00
 
 SELECT nome_cliente, saldo_deposito
@@ -80,44 +79,45 @@ SELECT nome_cliente, saldo_deposito
 FROM deposito 
 WHERE saldo_deposito BETWEEN 3000 and 4000
 
---12-Nomes de clientes e a soma de dep贸sitos de cada nome, 
+--12-Nomes de clientes e a soma de dep髎itos de cada nome, 
 --quando a soma for maior que R$ 5.000,00
 
 SELECT nome_cliente, sum(saldo_deposito)
 FROM deposito GROUP BY nome_cliente
 HAVING sum(saldo_deposito) > 5000
 
---13-Nomes de clientes e a soma de dep贸sitos de cada nome,
+--13-Nomes de clientes e a soma de dep髎itos de cada nome,
 --quando a soma estiver entre R$ 1.000,00 e R$ 4.000,00,
 --em ordem pela soma
 
 SELECT nome_cliente, sum(saldo_deposito)
-FROM deposito group by nome_cliente 
+FROM deposito group by nome_cliente
 HAVING sum(saldo_deposito) BETWEEN 1000 AND 4000
 ORDER BY sum(saldo_deposito)
 
 
---14-Nomes de clientes e a soma de dep贸sitos de cada nome,
---quando a soma estiver maior do que a m茅dia de dep贸sitos,
+--14-Nomes de clientes e a soma de dep髎itos de cada nome,
+--quando a soma estiver maior do que a m閐ia de dep髎itos,
 --em ordem pela soma
 
 SELECT nome_cliente, sum(saldo_deposito)
 FROM deposito GROUP BY nome_cliente
-HAVING sum(saldo_deposito) > avg(saldo_deposito)
+HAVING sum(saldo_deposito) > (select avg(saldo_deposito) from deposito)
 ORDER BY sum(saldo_deposito)
 
---15-Fa莽a uma listagem da soma de dep贸sitos feitos
---por cada cliente em cada ag锚ncia. Ordene o resultado
---pelo nome do cliente e depois pelo nome da ag锚ncia.
+
+--15-Fa鏰 uma listagem da soma de dep髎itos feitos
+--por cada cliente em cada ag阯cia. Ordene o resultado
+--pelo nome do cliente e depois pelo nome da ag阯cia.
 
 SELECT nome_agencia, nome_cliente, sum(saldo_deposito)
 FROM deposito 
-GROUP BY nome_cliente, nome_agencia 
+GROUP BY nome_cliente, nome_agencia
 ORDER BY nome_cliente, nome_agencia
 
---16- Selecione os nomes dos clientes e a soma de dep贸sitos
---feitos por eles em cada ag锚ncia que foram maiores que todos
---os dep贸sitos efetuados na ag锚ncia 'Pampulha'.
+--16- Selecione os nomes dos clientes e a soma de dep髎itos
+--feitos por eles em cada ag阯cia que foram maiores que todos
+--os dep髎itos efetuados na ag阯cia 'Pampulha'.
 
 --Conjunto1:
 SELECT nome_cliente, nome_agencia, sum(saldo_deposito) 
@@ -125,12 +125,11 @@ FROM deposito GROUP BY nome_cliente, nome_agencia
 
 --Conjunto2: 
 SELECT sum(saldo_deposito) FROM deposito 
-WHERE nome_agencia = 'Pampulha'
-GROUP BY nome_agencia
+WHERE nome_agencia='Pampulha' GROUP BY nome_agencia
 
 --Conjunto1 HAVING sum > ALL Conjunto2
 SELECT nome_cliente, nome_agencia, sum(saldo_deposito) 
 FROM deposito GROUP BY nome_cliente, nome_agencia 
 HAVING sum(saldo_deposito) > ALL
-(SELECT sum(saldo_deposito) FROM deposito 
-where nome_agencia = 'Pampulha' GROUP BY nome_agencia);
+	(SELECT sum(saldo_deposito) FROM deposito 
+	WHERE nome_agencia='Pampulha' GROUP BY nome_agencia);
